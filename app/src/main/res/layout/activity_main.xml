@@ -10,108 +10,131 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="400dp"
-        android:layout_margin="8dp">
-        <ImageView
+        android:layout_margin="8dp"
+        android:id="@+id/constraint_main">
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/switch_am_pm"
+            android:text="@string/am_pm"
+            android:textOn="@string/time_am"
+            android:textOff="@string/time_pm"
+            android:checked="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="12dp"
+            />
+        <ImageButton
             app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="150dp"
-            app:layout_constraintCircleAngle="0"
-            android:src="@drawable/test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/iv_time_12"
-            tools:ignore="MissingConstraints" />
-        <ImageView
-            app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="150dp"
+            app:layout_constraintCircleRadius="140dp"
             app:layout_constraintCircleAngle="30"
             android:src="@drawable/test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/iv_time_1"/>
-        <ImageView
+            android:id="@+id/ib_time_1"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
+        <ImageButton
             app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="150dp"
+            app:layout_constraintCircleRadius="140dp"
             app:layout_constraintCircleAngle="60"
             android:src="@drawable/test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/iv_time_2"/>
-        <ImageView
+            android:id="@+id/ib_time_2"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
+        <ImageButton
             app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="150dp"
+            app:layout_constraintCircleRadius="140dp"
             app:layout_constraintCircleAngle="90"
             android:src="@drawable/test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/iv_time_3"/>
-        <ImageView
+            android:id="@+id/ib_time_3"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
+        <ImageButton
             app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="150dp"
+            app:layout_constraintCircleRadius="140dp"
+            app:layout_constraintCircleAngle="0"
+            android:src="@drawable/test"
+            android:id="@+id/ib_time_12"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
+        <ImageButton
+            app:layout_constraintCircle="@id/clock_container"
+            app:layout_constraintCircleRadius="140dp"
             app:layout_constraintCircleAngle="120"
             android:src="@drawable/test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/iv_time_4"/>
-        <ImageView
+            android:id="@+id/ib_time_4"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
+        <ImageButton
             app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="150dp"
+            app:layout_constraintCircleRadius="140dp"
             app:layout_constraintCircleAngle="150"
             android:src="@drawable/test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/iv_time_5"/>
-        <ImageView
+            android:id="@+id/ib_time_5"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
+        <ImageButton
             app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="150dp"
+            app:layout_constraintCircleRadius="140dp"
             app:layout_constraintCircleAngle="180"
             android:src="@drawable/test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/iv_time_6"/>
-        <ImageView
+            android:id="@+id/ib_time_6"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
+        <ImageButton
             app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="150dp"
+            app:layout_constraintCircleRadius="140dp"
             app:layout_constraintCircleAngle="210"
             android:src="@drawable/test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/iv_time_7"/>
-        <ImageView
+            android:id="@+id/ib_time_7"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
+        <ImageButton
             app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="150dp"
+            app:layout_constraintCircleRadius="140dp"
             app:layout_constraintCircleAngle="240"
             android:src="@drawable/test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/iv_time_8"/>
-        <ImageView
+            android:id="@+id/ib_time_8"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
+        <ImageButton
             app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="150dp"
+            app:layout_constraintCircleRadius="140dp"
             app:layout_constraintCircleAngle="270"
             android:src="@drawable/test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/iv_time_9"/>
-        <ImageView
+            android:id="@+id/ib_time_9"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
+        <ImageButton
             app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="150dp"
+            app:layout_constraintCircleRadius="140dp"
             app:layout_constraintCircleAngle="300"
             android:src="@drawable/test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/iv_time_10"/>
-        <ImageView
+            android:id="@+id/ib_time_10"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
+        <ImageButton
             app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="150dp"
+            app:layout_constraintCircleRadius="140dp"
             app:layout_constraintCircleAngle="330"
             android:src="@drawable/test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/iv_time_11"/>
+            android:id="@+id/ib_time_11"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
         <View
             android:layout_width="325dp"
             android:layout_height="325dp"
-
             android:id="@+id/clock_container"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -126,7 +149,8 @@
             app:layout_constraintBottom_toBottomOf="@+id/clock_container"
             app:layout_constraintEnd_toEndOf="@+id/clock_container"
             app:layout_constraintStart_toStartOf="@+id/clock_container"
-            app:layout_constraintTop_toTopOf="@+id/clock_container" />
+            app:layout_constraintTop_toTopOf="@+id/clock_container"
+            android:contentDescription="@string/arrow"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -135,7 +159,8 @@
             app:layout_constraintBottom_toBottomOf="@+id/clock_container"
             app:layout_constraintEnd_toEndOf="@+id/clock_container"
             app:layout_constraintStart_toStartOf="@+id/clock_container"
-            app:layout_constraintTop_toTopOf="@+id/clock_container"/>
+            app:layout_constraintTop_toTopOf="@+id/clock_container"
+            android:contentDescription="@string/arrow"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -143,45 +168,89 @@
         android:id="@+id/linear_buttons"
         android:layout_margin="8dp"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/btn_mon"
-            style="@style/Widget.AppCompat.ButtonBar"
+            style="@style/DayButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="@string/mon" />
         <Button
             android:id="@+id/btn_tue"
+            style="@style/DayButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="@string/tue" />
         <Button
             android:id="@+id/btn_wed"
-            style="@android:style/Widget.Material.Button.Borderless"
+            style="@style/DayButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="@string/wed" />
         <Button
             android:id="@+id/btn_thu"
+            style="@style/DayButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="@string/thu" />
         <Button
             android:id="@+id/btn_fri"
+            style="@style/DayButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="@string/fri" />
         <Button
             android:id="@+id/btn_sat"
+            style="@style/DayButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="@string/sat" />
         <Button
             android:id="@+id/btn_sun"
+            style="@style/DayButton"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="@string/sun" />
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <TextView
+            android:id="@+id/tv_new_time"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/cousine"
+            android:visibility="invisible"
+            android:textSize="30sp" />
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:focusable="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignBottom="@id/tv_new_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fabSize="normal"
+            android:layout_marginEnd="12dp"
+            android:clickable="true"
+            android:elevation="8dp"
+            android:src="@android:drawable/ic_input_add" />
+
+
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
