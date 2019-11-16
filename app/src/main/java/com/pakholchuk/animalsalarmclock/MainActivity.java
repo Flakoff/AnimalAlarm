@@ -1,7 +1,11 @@
 package com.pakholchuk.animalsalarmclock;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -11,20 +15,25 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.pakholchuk.animalsalarmclock.adapter.AlarmRecycleAdapter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import butterknife.BindView;
-import butterknife.BindViews;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.fab) FloatingActionButton floatingActionButton;
-    @BindView(R.id.switch_am_pm) Switch btnAm;
+    @BindView(R.id.switch_am_pm) Switch switchAmPm;
     @BindView(R.id.tv_new_time) TextView tvNewTime;
 
     @BindView(R.id.iv_hour) ImageView ivHour;
@@ -52,11 +61,24 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.ib_time_12) ImageButton ibTime12;
 
 
-    ArrayList<AlarmClock> listAlarms;
+
+    ArrayList<AlarmClock> listAlarms = new ArrayList<>();
     ArrayList<View> daysList = new ArrayList<>();
+    boolean amPm;
     int hour;
     int minute;
     final String LOG_TAG = "LOG_TAG";
+
+    RecyclerView recyclerView;
+    AlarmRecycleAdapter alarmAdapter;
+
+    private void initRecyclerView(){
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        alarmAdapter = new AlarmRecycleAdapter();
+        recyclerView.setAdapter(alarmAdapter);
+
+    }
 
     View.OnClickListener fabMainListener = new View.OnClickListener() {
         @Override
@@ -73,8 +95,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
         showCurrentTime();
+        initRecyclerView();
+
         floatingActionButton.setOnClickListener(fabMainListener);
         Log.d(LOG_TAG, "fabMainListener added");
 
@@ -87,51 +110,50 @@ public class MainActivity extends AppCompatActivity {
             switch (v.getId()){
                 case R.id.ib_time_1:{
                     setMinutes(1);
-                    hour = 1;
                     break;
                 }
                 case R.id.ib_time_2:{
-                    hour = 2;
+                    setMinutes(2);
                     break;
                 }
                 case R.id.ib_time_3:{
-                    hour = 3;
+                    setMinutes(3);
                     break;
                 }
                 case R.id.ib_time_4:{
-                    hour = 4;
+                    setMinutes(4);
                     break;
                 }
                 case R.id.ib_time_5:{
-                    hour = 5;
+                    setMinutes(5);
                     break;
                 }
                 case R.id.ib_time_6:{
-                    hour = 6;
+                    setMinutes(6);
                     break;
                 }
                 case R.id.ib_time_7:{
-                    hour = 7;
+                    setMinutes(7);
                     break;
                 }
                 case R.id.ib_time_8:{
-                    hour = 8;
+                    setMinutes(8);
                     break;
                 }
                 case R.id.ib_time_9:{
-                    hour = 9;
+                    setMinutes(9);
                     break;
                 }
                 case R.id.ib_time_10:{
-                    hour = 10;
+                    setMinutes(10);
                     break;
                 }
                 case R.id.ib_time_11:{
-                    hour = 11;
+                    setMinutes(11);
                     break;
                 }
                 case R.id.ib_time_12:{
-                    hour = 12;
+                    setMinutes(12);
                     break;
                 }
                 default:break;
@@ -160,10 +182,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void setMinutes(int hours) {
-
-        String time = hours + ":00";
-        hour = hours;
+    private void setMinutes(int hour) {
+        switchAmPm.setVisibility(View.INVISIBLE);
+        amPm = switchAmPm.isChecked();
+        this.hour=hour;
+        ivMinute.setVisibility(View.VISIBLE);
+        ivMinute.setRotation(0);
+        ivHour.setRotation(hour*30);
+        String am = "AM";
+        if (amPm){
+            am = "PM";
+        }
+        String time = String.format(Locale.getDefault(), "%02d", hour)
+                + ":00"
+                + am;
         Log.d(LOG_TAG, time + " , setMinutes");
         tvNewTime.setText(time);
         setButtonsOnClick(new MinuteOnClickListener());
@@ -178,47 +210,47 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
                 case R.id.ib_time_2:{
-                    minute = 10;
+                    setDays(10);
                     break;
                 }
                 case R.id.ib_time_3:{
-                    minute = 15;
+                    setDays(15);
                     break;
                 }
                 case R.id.ib_time_4:{
-                    minute = 20;
+                    setDays(20);
                     break;
                 }
                 case R.id.ib_time_5:{
-                    minute = 25;
+                    setDays(25);
                     break;
                 }
                 case R.id.ib_time_6:{
-                    minute = 30;
+                    setDays(30);
                     break;
                 }
                 case R.id.ib_time_7:{
-                    minute = 35;
+                    setDays(35);
                     break;
                 }
                 case R.id.ib_time_8:{
-                    minute = 40;
+                    setDays(40);
                     break;
                 }
                 case R.id.ib_time_9:{
-                    minute = 45;
+                    setDays(45);
                     break;
                 }
                 case R.id.ib_time_10:{
-                    minute = 50;
+                    setDays(50);
                     break;
                 }
                 case R.id.ib_time_11:{
-                    minute = 55;
+                    setDays(55);
                     break;
                 }
                 case R.id.ib_time_12:{
-                    minute = 0;
+                    setDays(0);
                     break;
                 }
                 default:break;
@@ -227,11 +259,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private void setDays(int minutes) {
+    private void setDays(int minute) {
         Log.d(LOG_TAG, "setDays()");
-        String time = hour + ":" + minutes;
-        minute = minutes;
+        this.minute = minute;
+        ivMinute.setRotation(this.minute *6);
+        ivHour.setRotation((hour*30)+(this.minute *0.5f));
+        String am = "AM";
+        if (amPm){
+            am = "PM";
+        }
+        String time = String.format(Locale.getDefault(), "%02d", hour)
+                + ":"
+                + String.format(Locale.getDefault(), "%02d", this.minute)
+                + am;
         tvNewTime.setText(time);
         setDaysOnClick(new DayOnTouchListener());
         floatingActionButton.show();
@@ -240,19 +280,40 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 AlarmClock alarmClock = new AlarmClock();
                 alarmClock.setHour(hour);
-                alarmClock.setMinute(minute);
+                alarmClock.setMinute(MainActivity.this.minute);
+                alarmClock.setPm(amPm);
                 boolean[] days = new boolean[7];
                 for (int i = 0; i < 7; i++){
                     days[i] = daysList.get(i).isPressed();
                 }
                 alarmClock.setDays(days);
+                listAlarms.add(alarmClock);
                 floatingActionButton.setOnClickListener(fabMainListener);
+                resetDayButtons();
+                showCurrentTime();
+                tvNewTime.setVisibility(View.INVISIBLE);
+                Toast toast = Toast.makeText(getApplicationContext(), "New Alarm added!", Toast.LENGTH_SHORT);
+                toast.show();
+                alarmAdapter.clearAlarms(); //TODO поменять логику
+                alarmAdapter.setAlarms(listAlarms);
+
+
             }
         });
     }
 
-    private void showCurrentTime() {
+    private void resetDayButtons() {
+        for (View v : daysList){
+            v.setPressed(false);
+        }
+    }
 
+    private void showCurrentTime() {
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        hour = calendar.get(Calendar.HOUR);
+        minute = calendar.get(Calendar.MINUTE);
+        ivHour.setRotation((hour*30)+(minute/2));
+        ivMinute.setRotation(minute*6);
     }
 
     private void setDaysOnClick(View.OnTouchListener listener){
@@ -267,8 +328,10 @@ public class MainActivity extends AppCompatActivity {
         daysList.add(btnSun);
         for (View v : daysList){
             v.setOnTouchListener(listener);
+
         }
     }
+
     private void setButtonsOnClick(View.OnClickListener ibListener){
         Log.d(LOG_TAG, "setButtonsOnClick" + ibListener.getClass().toString());
         ArrayList<View> viewList = new ArrayList<>();
@@ -295,8 +358,10 @@ public class MainActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "newAlarmStarted");
         String defaultTime = "00:00";
         tvNewTime.setVisibility(View.VISIBLE);
+        switchAmPm.setVisibility(View.VISIBLE);
         tvNewTime.setText(defaultTime);
         ivMinute.setVisibility(View.INVISIBLE);
+
         setButtonsOnClick(new HourOnClickListener());
     }
 

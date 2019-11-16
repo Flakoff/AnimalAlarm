@@ -1,15 +1,21 @@
 package com.pakholchuk.animalsalarmclock;
 
-import android.widget.Button;
-import android.widget.ImageButton;
-
-import java.time.DayOfWeek;
-
-class AlarmClock {
+public class AlarmClock {
 
     private int hour;
     private int minute;
     private boolean[] days = new boolean[7];
+    private boolean isPm;
+
+    public boolean isPm() {
+        return isPm;
+    }
+
+    public void setPm(boolean pm) {
+        isPm = pm;
+    }
+
+
 
     public boolean[] getDays() {
         return days;
