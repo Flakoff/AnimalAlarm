@@ -1,11 +1,9 @@
 package com.pakholchuk.animalsalarmclock;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -18,7 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.pakholchuk.animalsalarmclock.adapter.AlarmRecycleAdapter;
+import com.pakholchuk.animalsalarmclock.adapter.AlarmRecyclerAdapter;
+import com.pakholchuk.animalsalarmclock.helper.RecyclerItemTouchHelperCallback;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.ib_time_12) ImageButton ibTime12;
 
 
-
-    ArrayList<AlarmClock> listAlarms = new ArrayList<>();
     ArrayList<View> daysList = new ArrayList<>();
     boolean amPm;
     int hour;
@@ -70,14 +67,17 @@ public class MainActivity extends AppCompatActivity {
     final String LOG_TAG = "LOG_TAG";
 
     RecyclerView recyclerView;
-    AlarmRecycleAdapter alarmAdapter;
+    AlarmRecyclerAdapter alarmAdapter;
 
     private void initRecyclerView(){
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        alarmAdapter = new AlarmRecycleAdapter();
+        alarmAdapter = new AlarmRecyclerAdapter();
         recyclerView.setAdapter(alarmAdapter);
 
+        ItemTouchHelper.Callback callback = new RecyclerItemTouchHelperCallback(alarmAdapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerView);
     }
 
     View.OnClickListener fabMainListener = new View.OnClickListener() {
@@ -87,8 +87,6 @@ public class MainActivity extends AppCompatActivity {
             floatingActionButton.hide();
         }
     };
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
 
         floatingActionButton.setOnClickListener(fabMainListener);
         Log.d(LOG_TAG, "fabMainListener added");
-
     }
 
     class HourOnClickListener implements View.OnClickListener{
@@ -160,46 +157,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-    }
-
-    class DayOnTouchListener implements View.OnTouchListener{
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-
-            v.performClick();
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (!v.isPressed()) {
-                    Log.d(LOG_TAG, "setPressed " + v.getId());
-                    v.setPressed(true);
-                }
-                else {
-                    v.setPressed(false);
-                    Log.d(LOG_TAG, "setUnpressed " + v.getId());
-                }
-            }
-            return true;
-        }
-    }
-
-    private void setMinutes(int hour) {
-        switchAmPm.setVisibility(View.INVISIBLE);
-        amPm = switchAmPm.isChecked();
-        this.hour=hour;
-        ivMinute.setVisibility(View.VISIBLE);
-        ivMinute.setRotation(0);
-        ivHour.setRotation(hour*30);
-        String am = "AM";
-        if (amPm){
-            am = "PM";
-        }
-        String time = String.format(Locale.getDefault(), "%02d", hour)
-                + ":00"
-                + am;
-        Log.d(LOG_TAG, time + " , setMinutes");
-        tvNewTime.setText(time);
-        setButtonsOnClick(new MinuteOnClickListener());
-    }
+    }   // Hour arrow class
 
     class MinuteOnClickListener implements View.OnClickListener{
         @Override
@@ -259,7 +217,60 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    class DayOnTouchListener implements View.OnTouchListener{
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+
+            v.performClick();
+
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (!v.isPressed()) {
+                    Log.d(LOG_TAG, "setPressed " + v.getId());
+                    v.setPressed(true);
+                }
+                else {
+                    v.setPressed(false);
+                    Log.d(LOG_TAG, "setUnpressed " + v.getId());
+                }
+            }
+            return true;
+        }
+    }   // Day button class
+
+    private void newAlarm() {
+        Log.d(LOG_TAG, "newAlarmStarted");
+        String defaultTime = "00:00";
+        tvNewTime.setVisibility(View.VISIBLE);
+        switchAmPm.setVisibility(View.VISIBLE);
+        tvNewTime.setText(defaultTime);
+        ivMinute.setVisibility(View.INVISIBLE);
+        /* First resetting visibilities, then set alarm time:
+        Hour arrow, minute arrow, DoW button */
+        setButtonsOnClick(new HourOnClickListener());
+    }
+
+    private void setMinutes(int hour) {
+        //After setting Hour arrow, set Minute
+        switchAmPm.setVisibility(View.INVISIBLE);
+        amPm = switchAmPm.isChecked();
+        this.hour=hour;
+        ivMinute.setVisibility(View.VISIBLE);
+        ivMinute.setRotation(0);
+        ivHour.setRotation(hour*30);
+        String am = "AM";
+        if (amPm){
+            am = "PM";
+        }
+        String time = String.format(Locale.getDefault(), "%02d", hour)
+                + ":00"
+                + am;
+        Log.d(LOG_TAG, time + " , setMinutes");
+        tvNewTime.setText(time);
+        setButtonsOnClick(new MinuteOnClickListener());
+    }
+
     private void setDays(int minute) {
+        //After minutes set Days of week
         Log.d(LOG_TAG, "setDays()");
         this.minute = minute;
         ivMinute.setRotation(this.minute *6);
@@ -287,17 +298,13 @@ public class MainActivity extends AppCompatActivity {
                     days[i] = daysList.get(i).isPressed();
                 }
                 alarmClock.setDays(days);
-                listAlarms.add(alarmClock);
                 floatingActionButton.setOnClickListener(fabMainListener);
                 resetDayButtons();
                 showCurrentTime();
                 tvNewTime.setVisibility(View.INVISIBLE);
                 Toast toast = Toast.makeText(getApplicationContext(), "New Alarm added!", Toast.LENGTH_SHORT);
                 toast.show();
-                alarmAdapter.clearAlarms(); //TODO поменять логику
-                alarmAdapter.setAlarms(listAlarms);
-
-
+                alarmAdapter.addNewAlarm(alarmClock);
             }
         });
     }
@@ -349,20 +356,9 @@ public class MainActivity extends AppCompatActivity {
         viewList.add(ibTime12);
         for (View v: viewList) {
             v.setOnClickListener(ibListener);
-
         }
-
     }
 
-    private void newAlarm() {
-        Log.d(LOG_TAG, "newAlarmStarted");
-        String defaultTime = "00:00";
-        tvNewTime.setVisibility(View.VISIBLE);
-        switchAmPm.setVisibility(View.VISIBLE);
-        tvNewTime.setText(defaultTime);
-        ivMinute.setVisibility(View.INVISIBLE);
 
-        setButtonsOnClick(new HourOnClickListener());
-    }
 
 }

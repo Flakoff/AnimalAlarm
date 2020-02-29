@@ -162,6 +162,7 @@
             app:layout_constraintStart_toStartOf="@+id/clock_container"
             app:layout_constraintTop_toTopOf="@+id/clock_container"
             android:contentDescription="@string/arrow"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
     <LinearLayout
         android:layout_width="match_parent"

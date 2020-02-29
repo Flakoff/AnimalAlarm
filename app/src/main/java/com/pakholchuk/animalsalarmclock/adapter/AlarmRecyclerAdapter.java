@@ -8,15 +8,18 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pakholchuk.animalsalarmclock.R;
+import com.pakholchuk.animalsalarmclock.helper.ItemTouchHelperAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 
 
-public class AlarmRecycleAdapter extends RecyclerView.Adapter<AlarmRecycleAdapter.AlarmsViewHolder> {
+public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdapter.AlarmsViewHolder> implements ItemTouchHelperAdapter {
 
     class AlarmsViewHolder extends RecyclerView.ViewHolder {
         private Switch switchAlarm;
@@ -72,20 +75,12 @@ public class AlarmRecycleAdapter extends RecyclerView.Adapter<AlarmRecycleAdapte
 
     private ArrayList<AlarmClock> alarms = new ArrayList<>();
 
-    public void setAlarms(ArrayList<AlarmClock> list){
-        alarms.addAll(list);
+    public void addNewAlarm(AlarmClock newAlarm){
+        alarms.add(newAlarm);
         notifyDataSetChanged();
     }
 
-    public void clearAlarms(){
-        alarms.clear();
-        notifyDataSetChanged();
-    }
-
-
-
-
-    public AlarmRecycleAdapter() {
+    public AlarmRecyclerAdapter() {
     }
 
     @NonNull
@@ -93,19 +88,40 @@ public class AlarmRecycleAdapter extends RecyclerView.Adapter<AlarmRecycleAdapte
     public AlarmsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_alarm, parent, false);
-
         return new AlarmsViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull AlarmsViewHolder holder, int position) {
         holder.bind(alarms.get(position));
-
     }
 
     @Override
     public int getItemCount() {
         return alarms.size();
+    }
+
+    @Override
+    public boolean onItemMoved(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(alarms, i, i+1);
+            }
+
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(alarms, i, i-1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+    @Override
+    public void onItemDismissed(int position) {
+        alarms.remove(position);
+        notifyItemRemoved(position);
+
     }
 
 }
