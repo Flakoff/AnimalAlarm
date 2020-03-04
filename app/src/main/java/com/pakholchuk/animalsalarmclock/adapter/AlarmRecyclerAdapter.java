@@ -1,6 +1,13 @@
 package com.pakholchuk.animalsalarmclock.adapter;
 
 import com.pakholchuk.animalsalarmclock.AlarmClock;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,21 +15,38 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.pakholchuk.animalsalarmclock.AlarmReceiver;
 import com.pakholchuk.animalsalarmclock.R;
+import com.pakholchuk.animalsalarmclock.helper.AlarmDBHelper;
 import com.pakholchuk.animalsalarmclock.helper.ItemTouchHelperAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 
 public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdapter.AlarmsViewHolder> implements ItemTouchHelperAdapter {
 
+    private AlarmDBHelper dbHelper;
+    private AlarmManager alarmManager;
+    PendingIntent pIntent;
+    Context context;
+
+
+    public static final String INTENT_ACTION = "ACTION_ALARM";
+
+    public void cancelAll() {
+        dbHelper.deleteAll();
+        alarms.clear();
+        notifyDataSetChanged();
+    }
+
     class AlarmsViewHolder extends RecyclerView.ViewHolder {
-        private Switch switchAlarm;
         private TextView tvAlarmTime;
         private TextView tvAMon;
         private TextView tvATue;
@@ -35,13 +59,13 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
         public AlarmsViewHolder(@NonNull View itemView) {
             super(itemView);
             tvAlarmTime = itemView.findViewById(R.id.tv_alarm_time);
-            tvAMon = itemView.findViewById(R.id.tv_a_mon);
-            tvATue = itemView.findViewById(R.id.tv_a_tue);
-            tvAWed = itemView.findViewById(R.id.tv_a_wed);
-            tvAThu = itemView.findViewById(R.id.tv_a_thu);
-            tvAFri = itemView.findViewById(R.id.tv_a_fri);
-            tvASat = itemView.findViewById(R.id.tv_a_sat);
-            tvASun = itemView.findViewById(R.id.tv_a_sun);
+//            tvAMon = itemView.findViewById(R.id.tv_a_mon);
+//            tvATue = itemView.findViewById(R.id.tv_a_tue);
+//            tvAWed = itemView.findViewById(R.id.tv_a_wed);
+//            tvAThu = itemView.findViewById(R.id.tv_a_thu);
+//            tvAFri = itemView.findViewById(R.id.tv_a_fri);
+//            tvASat = itemView.findViewById(R.id.tv_a_sat);
+//            tvASun = itemView.findViewById(R.id.tv_a_sun);
         }
 
         public void bind(AlarmClock alarmClock) {
@@ -54,7 +78,6 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
                     + String.format(Locale.getDefault(), "%02d", alarmClock.getMinute())
                     + am;
             tvAlarmTime.setText(time);
-
             ArrayList<TextView> tViews = new ArrayList<>();
             tViews.add(tvAMon);
             tViews.add(tvATue);
@@ -64,7 +87,6 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
             tViews.add(tvASat);
             tViews.add(tvASun);
             int color = tvAlarmTime.getResources().getColor(R.color.colorAccent);
-
             for (int i = 0; i < 7; i++){
                 if ((alarmClock.getDays())[i]) {
                     (tViews.get(i)).setBackgroundColor(color);
@@ -75,12 +97,48 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
 
     private ArrayList<AlarmClock> alarms = new ArrayList<>();
 
-    public void addNewAlarm(AlarmClock newAlarm){
-        alarms.add(newAlarm);
+    public void initAlarmsList() {
+        alarms = (ArrayList<AlarmClock>) dbHelper.getAllAlarms();
         notifyDataSetChanged();
     }
 
-    public AlarmRecyclerAdapter() {
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void addNewAlarm(AlarmClock newAlarm){
+        AlarmClock alarm = dbHelper.addAlarm(newAlarm);
+        alarms.add(alarm);
+        setAlarm(alarm);
+        notifyDataSetChanged();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void setAlarm(AlarmClock alarm) {
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra(AlarmClock.ID, alarm.getInsertRowId());
+
+        int requestCode = (int) alarm.getInsertRowId();
+        Log.d("myTag", "request = " + alarm.getInsertRowId());
+
+        pIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarm.getTime(), pIntent);
+
+    }
+
+    public void cancelAlarm(long id) {
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra(AlarmClock.ID, id);
+        PendingIntent cancelIntent =
+                PendingIntent.getBroadcast(context, (int) id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.cancel(cancelIntent);
+    }
+
+    public List<AlarmClock> getAllAlarms(){
+        return dbHelper.getAllAlarms();
+    }
+
+    public AlarmRecyclerAdapter(Context context) {
+        dbHelper = new AlarmDBHelper(context);
+        this.context = context;
+        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
     @NonNull
@@ -101,6 +159,7 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
         return alarms.size();
     }
 
+    // TODO: sort alarms by order
     @Override
     public boolean onItemMoved(int fromPosition, int toPosition) {
         if (fromPosition < toPosition) {
@@ -119,9 +178,13 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
 
     @Override
     public void onItemDismissed(int position) {
+        cancelAlarm(alarms.get(position).getInsertRowId());
+        dbHelper.deleteAlarm(alarms.get(position).getInsertRowId());
         alarms.remove(position);
         notifyItemRemoved(position);
-
     }
 
+    public void close() {
+
+    }
 }

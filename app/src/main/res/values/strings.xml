@@ -12,4 +12,9 @@
     <string name="wed">WED</string>
     <string name="tue">TUE</string>
     <string name="arrow">Arrow</string>
+    <string name="cancel">CANCEL</string>
+    <string name="cancel_all">Cancel all</string>
+    <string name="about">About</string>
+    <string name="text_about_fragment">Cartoon vector created by freepik - www.freepik.com
+    Photo by eberhard grossgasteiger on Unsplash</string>
 </resources>

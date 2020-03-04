@@ -1,22 +1,34 @@
 package com.pakholchuk.animalsalarmclock;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pakholchuk.animalsalarmclock.adapter.AlarmRecyclerAdapter;
+import com.pakholchuk.animalsalarmclock.helper.AlarmDBHelper;
 import com.pakholchuk.animalsalarmclock.helper.RecyclerItemTouchHelperCallback;
 
 import java.text.SimpleDateFormat;
@@ -29,8 +41,15 @@ import java.util.TimeZone;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
 
+    /* <a href="https://www.freepik.com/free-photos-vectors/cartoon">Cartoon vector created by freepik - www.freepik.com</a>
+    *Photo by eberhard grossgasteiger on Unsplash
+     * TODO: добавить иконки и стрелки
+     * TODO: настроить АлармМенеджер
+     * TODO: настроить окно отключения сигнала
+     * TODO: настроить сохранение в памяти
+    */
     @BindView(R.id.fab) FloatingActionButton floatingActionButton;
     @BindView(R.id.switch_am_pm) Switch switchAmPm;
     @BindView(R.id.tv_new_time) TextView tvNewTime;
@@ -64,16 +83,41 @@ public class MainActivity extends AppCompatActivity {
     boolean amPm;
     int hour;
     int minute;
-    final String LOG_TAG = "LOG_TAG";
+    final String LOG_TAG = "myTag";
 
     RecyclerView recyclerView;
     AlarmRecyclerAdapter alarmAdapter;
+    private About fragmentAbout;
+    private boolean isFragmentOnTop = false;
+
+    @Override
+    public void onBackPressed() {
+        if(isFragmentOnTop) {
+            getSupportFragmentManager().beginTransaction().remove(fragmentAbout).commit();
+            isFragmentOnTop = false;
+        }
+         else super.onBackPressed();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        showCurrentTime();
+        initRecyclerView();
+        fragmentAbout = new About();
+
+        floatingActionButton.setOnClickListener(fabMainListener);
+        Log.d(LOG_TAG, "fabMainListener added");
+    }
 
     private void initRecyclerView(){
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        alarmAdapter = new AlarmRecyclerAdapter();
+        initAlarmAdapter();
         recyclerView.setAdapter(alarmAdapter);
+        alarmAdapter.initAlarmsList();
 
         ItemTouchHelper.Callback callback = new RecyclerItemTouchHelperCallback(alarmAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
@@ -89,19 +133,20 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        showCurrentTime();
-        initRecyclerView();
-
-        floatingActionButton.setOnClickListener(fabMainListener);
-        Log.d(LOG_TAG, "fabMainListener added");
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_about:
+                showAbout();
+                return true;
+            case R.id.item_cancel_all:
+                alarmAdapter.cancelAll();
+                return true;
+            default:
+                return false;
+        }
     }
 
     class HourOnClickListener implements View.OnClickListener{
-
         @Override
         public void onClick(View v) {
             switch (v.getId()){
@@ -157,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-    }   // Hour arrow class
+    }
 
     class MinuteOnClickListener implements View.OnClickListener{
         @Override
@@ -244,13 +289,12 @@ public class MainActivity extends AppCompatActivity {
         switchAmPm.setVisibility(View.VISIBLE);
         tvNewTime.setText(defaultTime);
         ivMinute.setVisibility(View.INVISIBLE);
-        /* First resetting visibilities, then set alarm time:
-        Hour arrow, minute arrow, DoW button */
+        /* First reset visibilities, then set alarm time:
+        Hour arrow, minute arrow, DoW buttons */
         setButtonsOnClick(new HourOnClickListener());
     }
 
     private void setMinutes(int hour) {
-        //After setting Hour arrow, set Minute
         switchAmPm.setVisibility(View.INVISIBLE);
         amPm = switchAmPm.isChecked();
         this.hour=hour;
@@ -270,7 +314,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setDays(int minute) {
-        //After minutes set Days of week
         Log.d(LOG_TAG, "setDays()");
         this.minute = minute;
         ivMinute.setRotation(this.minute *6);
@@ -287,6 +330,7 @@ public class MainActivity extends AppCompatActivity {
         setDaysOnClick(new DayOnTouchListener());
         floatingActionButton.show();
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
                 AlarmClock alarmClock = new AlarmClock();
@@ -299,20 +343,74 @@ public class MainActivity extends AppCompatActivity {
                 }
                 alarmClock.setDays(days);
                 floatingActionButton.setOnClickListener(fabMainListener);
-                resetDayButtons();
-                showCurrentTime();
                 tvNewTime.setVisibility(View.INVISIBLE);
-                Toast toast = Toast.makeText(getApplicationContext(), "New Alarm added!", Toast.LENGTH_SHORT);
-                toast.show();
+                Toast.makeText(getApplicationContext(), "New Alarm added!", Toast.LENGTH_SHORT).show();
+                alarmClock.setTime(getTimeInMillis());
                 alarmAdapter.addNewAlarm(alarmClock);
+                showCurrentTime();
+                resetDayButtons();
             }
         });
+    }
+
+    void initAlarmAdapter() {
+        if (alarmAdapter == null) {
+            alarmAdapter = new AlarmRecyclerAdapter(this);
+        }
+    }
+
+    private long getTimeInMillis() {
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        Log.d(LOG_TAG, 0 + String.valueOf(calendar.getTimeInMillis()));
+
+        Log.d(LOG_TAG, hour + ":" + minute);
+
+        if (!amPm) {
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+
+        } else calendar.set(Calendar.HOUR_OF_DAY, hour + 12);
+        Log.d(LOG_TAG, 3 + String.valueOf(calendar.getTimeInMillis()));
+        calendar.set(Calendar.MINUTE, minute);
+        Log.d(LOG_TAG, 2 + String.valueOf(calendar.getTimeInMillis()));
+        calendar.set(Calendar.SECOND, 0);
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return calendar.getTimeInMillis();
     }
 
     private void resetDayButtons() {
         for (View v : daysList){
             v.setPressed(false);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initAlarmAdapter();
+        alarmAdapter.initAlarmsList();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        alarmAdapter.close();
+    }
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        popup.setOnMenuItemClickListener(this);
+        inflater.inflate(R.menu.menu, popup.getMenu());
+        popup.show();
+    }
+
+    private void showAbout() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.about_container, fragmentAbout).commit();
+        isFragmentOnTop = true;
     }
 
     private void showCurrentTime() {
@@ -335,7 +433,6 @@ public class MainActivity extends AppCompatActivity {
         daysList.add(btnSun);
         for (View v : daysList){
             v.setOnTouchListener(listener);
-
         }
     }
 

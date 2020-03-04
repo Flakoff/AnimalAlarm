@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_wakeup">
 
     <TextView
+        android:id="@+id/wake_up_time_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/wake_up_time_text_view"/>
-    <ImageView
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="200dp"
+        android:fontFamily="@font/cousine"
+        android:text="12:12 PM"
+        android:textColor="@android:color/tertiary_text_dark"
+        android:textSize="70sp" />
+
+    <Button
+        android:id="@+id/button_cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/wake_up_image"/>
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="100dp"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:textSize="40sp"
+        android:fontFamily="@font/cousine"
+        android:backgroundTint="@color/colorAccent"
+        android:backgroundTintMode="multiply"
+        android:text="@string/cancel" />
 </RelativeLayout>
