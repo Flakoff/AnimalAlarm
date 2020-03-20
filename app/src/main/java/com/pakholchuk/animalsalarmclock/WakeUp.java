@@ -1,6 +1,9 @@
 package com.pakholchuk.animalsalarmclock;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,6 +21,7 @@ public class WakeUp extends AppCompatActivity {
 
     AlarmDBHelper dbHelper;
     long alarmId;
+    MediaPlayer mp;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,21 +39,22 @@ public class WakeUp extends AppCompatActivity {
         AlarmClock alarm = dbHelper.getAlarmById(alarmId);
 
         TextView timeText = findViewById(R.id.wake_up_time_text_view);
-        String am = "AM";
-        if (alarm.isPm()){
-            am = "PM";
-        }
+
         String time = String.format(Locale.getDefault(), "%02d", alarm.getHour())
                 + ":"
-                + String.format(Locale.getDefault(), "%02d", alarm.getMinute())
-                + am;
+                + String.format(Locale.getDefault(), "%02d", alarm.getMinute());
         timeText.setText(time);
+
+        Uri notification = RingtoneManager.getActualDefaultRingtoneUri(getApplicationContext(), RingtoneManager.TYPE_ALARM);
+        mp = MediaPlayer.create(getApplicationContext(), notification);
+        mp.start();
 
         Button cancelButton = findViewById(R.id.button_cancel);
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dbHelper.deleteAlarm(alarmId);
+                mp.stop();
                 finish();
             }
         });
@@ -59,6 +64,7 @@ public class WakeUp extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         dbHelper.deleteAlarm(alarmId);
+        mp.stop();
         finish();
     }
 }

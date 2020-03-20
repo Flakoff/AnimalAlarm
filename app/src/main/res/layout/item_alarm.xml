@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp"
+    android:layout_margin="4dp"
     android:gravity="center_vertical"
+    android:background="#83B9F6CA"
     >
     <View
         android:layout_width="40dp"

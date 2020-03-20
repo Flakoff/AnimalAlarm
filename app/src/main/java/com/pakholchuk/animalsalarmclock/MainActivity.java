@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuI
 
     /* <a href="https://www.freepik.com/free-photos-vectors/cartoon">Cartoon vector created by freepik - www.freepik.com</a>
     *Photo by eberhard grossgasteiger on Unsplash
+    * Photo by Paweł Czerwiński on Unsplash
      * TODO: добавить иконки и стрелки
      * TODO: настроить АлармМенеджер
      * TODO: настроить окно отключения сигнала
