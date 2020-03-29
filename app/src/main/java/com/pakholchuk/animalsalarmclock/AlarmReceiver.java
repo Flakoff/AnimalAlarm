@@ -1,12 +1,9 @@
 package com.pakholchuk.animalsalarmclock;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.PowerManager;
 
 import androidx.annotation.RequiresApi;
 
@@ -24,7 +21,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
         long id = intent.getLongExtra(AlarmClock.ID, -1);
-        Intent startWakeUp = new Intent(context, WakeUp.class);
+        Intent startWakeUp = new Intent(context, WakeUpActivity.class);
         startWakeUp.putExtra(AlarmClock.ID, id);
         startWakeUp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(startWakeUp);

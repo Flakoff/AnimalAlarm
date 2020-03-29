@@ -17,4 +17,5 @@
     <string name="about">About</string>
     <string name="text_about_fragment">Cartoon vector created by freepik - www.freepik.com
     Photo by eberhard grossgasteiger on Unsplash</string>
+    <string name="default_time">00:00</string>
 </resources>

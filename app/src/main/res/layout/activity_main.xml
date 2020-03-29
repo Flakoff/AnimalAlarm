@@ -56,6 +56,15 @@
         <ImageButton
             app:layout_constraintCircle="@id/clock_container"
             app:layout_constraintCircleRadius="140dp"
+            app:layout_constraintCircleAngle="0"
+            android:src="@drawable/cow"
+            android:id="@+id/ib_time_0"
+            style="@style/AnimalImageButton"
+            tools:ignore="MissingConstraints"
+            android:contentDescription="@string/animal_icon"/>
+        <ImageButton
+            app:layout_constraintCircle="@id/clock_container"
+            app:layout_constraintCircleRadius="140dp"
             app:layout_constraintCircleAngle="30"
             android:src="@drawable/pig"
             android:id="@+id/ib_time_1"
@@ -80,15 +89,7 @@
             style="@style/AnimalImageButton"
             tools:ignore="MissingConstraints"
             android:contentDescription="@string/animal_icon"/>
-        <ImageButton
-            app:layout_constraintCircle="@id/clock_container"
-            app:layout_constraintCircleRadius="140dp"
-            app:layout_constraintCircleAngle="0"
-            android:src="@drawable/cow"
-            android:id="@+id/ib_time_12"
-            style="@style/AnimalImageButton"
-            tools:ignore="MissingConstraints"
-            android:contentDescription="@string/animal_icon"/>
+
         <ImageButton
             app:layout_constraintCircle="@id/clock_container"
             app:layout_constraintCircleRadius="140dp"
@@ -266,13 +267,14 @@
         >
 
         <TextView
-            android:id="@+id/tv_new_time"
+            android:id="@+id/tv_new_alarm_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_rectangle"
             android:layout_gravity="center"
             android:fontFamily="@font/cousine"
             android:visibility="invisible"
+            android:text="@string/default_time"
             android:textSize="30sp" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -9,9 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class About extends Fragment {
+public class AboutFragment extends Fragment {
 
-    public About() {
+    public AboutFragment() {
     }
 
     @Override

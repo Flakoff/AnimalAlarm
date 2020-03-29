@@ -34,8 +34,8 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
 
     private AlarmDBHelper dbHelper;
     private AlarmManager alarmManager;
-    PendingIntent pIntent;
-    Context context;
+    private PendingIntent pIntent;
+    private Context context;
 
 
     public static final String INTENT_ACTION = "ACTION_ALARM";
@@ -48,24 +48,10 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
 
     class AlarmsViewHolder extends RecyclerView.ViewHolder {
         private TextView tvAlarmTime;
-        private TextView tvAMon;
-        private TextView tvATue;
-        private TextView tvAWed;
-        private TextView tvAThu;
-        private TextView tvAFri;
-        private TextView tvASat;
-        private TextView tvASun;
 
-        public AlarmsViewHolder(@NonNull View itemView) {
+        AlarmsViewHolder(@NonNull View itemView) {
             super(itemView);
             tvAlarmTime = itemView.findViewById(R.id.tv_alarm_time);
-//            tvAMon = itemView.findViewById(R.id.tv_a_mon);
-//            tvATue = itemView.findViewById(R.id.tv_a_tue);
-//            tvAWed = itemView.findViewById(R.id.tv_a_wed);
-//            tvAThu = itemView.findViewById(R.id.tv_a_thu);
-//            tvAFri = itemView.findViewById(R.id.tv_a_fri);
-//            tvASat = itemView.findViewById(R.id.tv_a_sat);
-//            tvASun = itemView.findViewById(R.id.tv_a_sun);
         }
 
         public void bind(AlarmClock alarmClock) {
@@ -78,20 +64,6 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
                     + String.format(Locale.getDefault(), "%02d", alarmClock.getMinute())
                     + am;
             tvAlarmTime.setText(time);
-            ArrayList<TextView> tViews = new ArrayList<>();
-            tViews.add(tvAMon);
-            tViews.add(tvATue);
-            tViews.add(tvAWed);
-            tViews.add(tvAThu);
-            tViews.add(tvAFri);
-            tViews.add(tvASat);
-            tViews.add(tvASun);
-            int color = tvAlarmTime.getResources().getColor(R.color.colorAccent);
-            for (int i = 0; i < 7; i++){
-                if ((alarmClock.getDays())[i]) {
-                    (tViews.get(i)).setBackgroundColor(color);
-                }
-            }
         }
     }
 
@@ -114,13 +86,9 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
     public void setAlarm(AlarmClock alarm) {
         Intent intent = new Intent(context, AlarmReceiver.class);
         intent.putExtra(AlarmClock.ID, alarm.getInsertRowId());
-
         int requestCode = (int) alarm.getInsertRowId();
-        Log.d("myTag", "request = " + alarm.getInsertRowId());
-
         pIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarm.getTime(), pIntent);
-
     }
 
     public void cancelAlarm(long id) {
